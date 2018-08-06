@@ -10,11 +10,6 @@ import (
 )
 
 func main() {
-    if len(os.Args) == 4 {
-        fmt.Println("You must supply a metric name, namespace, and dimensions")
-        os.Exit(1)
-    }
-
 //    metric := os.Args[1]
     namespace := "AWS/EBS"
     dimensions := "VolumeId"
