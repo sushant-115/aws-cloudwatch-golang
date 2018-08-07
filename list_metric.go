@@ -1,13 +1,15 @@
 package main
 
 import (
+	"aws-cloudwatch-golang/config"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 
 	"fmt"
 	// "os"
-	"./config"
+
 	"strconv"
 	"time"
 )
