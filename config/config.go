@@ -16,13 +16,13 @@ const Stat string = "Maximum"
 const Unit string = "Count"
 
 //StartTime number of days from today
-const StartTime int =7 
+const StartTime int = 7
 
 //EndTime number of days from today (0 for today)
 const EndTime int = 0
 
 //Period in seconds
-const Period int = 3000
+const Period int = 3600 * 12
 
 //MaxDataPoints in result
 const MaxDataPoints int = 1000
