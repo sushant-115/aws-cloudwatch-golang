@@ -62,7 +62,6 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 }
 
 func main() {
-	//    metric := os.Args[1]
 	namespace := config.Namespace
 	dimensions := config.DimensionName
 
