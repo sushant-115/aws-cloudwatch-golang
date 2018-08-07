@@ -7,6 +7,7 @@ import (
 
 	"fmt"
 	// "os"
+	"config"
 	"strconv"
 	"time"
 )
@@ -16,8 +17,8 @@ var pID *string
 var period *int64
 var stat *string
 var unit *string
-var av = "Average"
-var st = "Seconds"
+var av = config.Stat
+var st = config.Unit
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
 	tim := time.Now()
@@ -60,8 +61,8 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 
 func main() {
 	//    metric := os.Args[1]
-	namespace := "AWS/EBS"
-	dimensions := "VolumeId"
+	namespace := config.Namespace
+	dimensions := config.DimensionName
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
