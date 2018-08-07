@@ -1,10 +1,10 @@
 package config
 
 //Namespace of the metric
-const Namespace string = "AWS/Billing"
+const Namespace string = "AWS/ApplicationELB"
 
 //DimensionName for filter the data points
-const DimensionName string = "ServiceName"
+const DimensionName string = "LoadBalancer"
 
 //DimensionValue for filter the data points
 const DimensionValue string = ""
