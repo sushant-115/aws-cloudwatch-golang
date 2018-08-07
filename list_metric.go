@@ -1,7 +1,7 @@
 package main
 
 import (
-	"aws-cloudwatch-golang/config"
+	"./config"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
