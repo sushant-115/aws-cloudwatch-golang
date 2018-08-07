@@ -1,7 +1,7 @@
 package config
 
 //Namespace of the metric
-const Namespace string = "AWS/ApplicationELB"
+const Namespace string = "AWS/Billing"
 
 //DimensionName for filter the data points
 const DimensionName string = "LoadBalancer"
@@ -13,10 +13,10 @@ const DimensionValue string = ""
 const Stat string = "Average"
 
 //Unit in which the output will come
-const Unit string = "Seconds"
+const Unit string = "Percent"
 
 //StartTime number of days from today
-const StartTime int =7 
+const StartTime int = 7
 
 //EndTime number of days from today (0 for today)
 const EndTime int = 0
