@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 	// "os"
-	"config"
+	"./config"
 	"strconv"
 	"time"
 )
