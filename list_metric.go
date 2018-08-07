@@ -23,18 +23,18 @@ var av = config.Stat
 var st = config.Unit
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
-	tim := time.Now()
-	startTime := time.Now().AddDate(0, 0, -2)
+	tim := time.Now().AddDate(0, 0, -config.EndTime)
+	startTime := time.Now().AddDate(0, 0, -config.StartTime)
 	stime := &startTime
 	t = &tim
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
 	stat = &av
 	unit = &st
-	prd := int64(3000)
+	prd := int64(config.Period)
 	period = &prd
 	returnData := true
-	maxDataPoints := int64(1000)
+	maxDataPoints := int64(config.MaxDataPoints)
 	metricStat := cloudwatch.MetricStat{
 		Metric: &cloudwatch.Metric{ /* required */
 			Dimensions: []*cloudwatch.Dimension{list.Dimensions[0]},
