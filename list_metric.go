@@ -91,15 +91,20 @@ func main() {
 		res, err := svc.GetMetricData(&paramQuery)
 		if err != nil {
 			fmt.Println(i, err)
-		}
-		for res.NextToken != nil {
-			paramQuery.NextToken = res.NextToken
-			res, err = svc.GetMetricData(&paramQuery)
-			if err != nil {
-				fmt.Println(i, err)
+		} else {
+			if res.NextToken != nil {
+				for res.NextToken != nil {
+					paramQuery.NextToken = res.NextToken
+					res, err = svc.GetMetricData(&paramQuery)
+					if err != nil {
+						fmt.Println(i, err)
+					} else {
+						fmt.Println(res)
+					}
+				}
+			} else {
+				fmt.Println(res)
 			}
-			fmt.Println(res)
 		}
-		fmt.Println(res)
 	}
 }
