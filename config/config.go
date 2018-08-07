@@ -1,28 +1,28 @@
 package config
 
 //Namespace of the metric
-const Namespace string = "AWS/Billing"
+const Namespace string = "AWS/EBS"
 
 //DimensionName for filter the data points
-const DimensionName string = "Currency"
+const DimensionName string = "VolumeId"
 
 //DimensionValue for filter the data points
 const DimensionValue string = ""
 
 //Stat value
-const Stat string = "Average"
+const Stat string = "Maximum"
 
 //Unit in which the output will come
-const Unit string = "Percent"
+const Unit string = "Count"
 
 //StartTime number of days from today
-const StartTime int = 7
+const StartTime int =7 
 
 //EndTime number of days from today (0 for today)
 const EndTime int = 0
 
 //Period in seconds
-const Period int = 300
+const Period int = 3000
 
 //MaxDataPoints in result
 const MaxDataPoints int = 1000

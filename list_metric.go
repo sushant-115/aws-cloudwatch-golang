@@ -18,9 +18,9 @@ var t *time.Time
 var pID *string
 var period *int64
 var stat *string
-var unit *string
+//var unit *string
 var av = config.Stat
-var st = config.Unit
+//var st = config.Unit
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
 	tim := time.Now().AddDate(0, 0, -config.EndTime)
@@ -30,7 +30,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
 	stat = &av
-	unit = &st
+//	unit = &st
 	prd := int64(config.Period)
 	period = &prd
 	returnData := true
@@ -43,7 +43,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 		},
 		Period: period, /* required */
 		Stat:   stat,
-		Unit:   unit,
+//		Unit:   unit,
 	}
 	metricQuery := cloudwatch.MetricDataQuery{
 		Id:         pID, /* required */
