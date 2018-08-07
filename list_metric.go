@@ -85,7 +85,7 @@ func main() {
 		paramQuery := getParam(i, result.Metrics[i])
 		res, err := svc.GetMetricData(&paramQuery)
 		if err != nil {
-			fmt.Println(i, "err")
+			fmt.Println(i, err)
 		}
 		fmt.Println(res)
 	}
