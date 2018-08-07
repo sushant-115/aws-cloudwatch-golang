@@ -21,6 +21,8 @@ var st = "Seconds"
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
 	tim := time.Now()
+	startTime := time.Now().AddDate(0, 0, -2)
+	stime := &startTime
 	t = &tim
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
@@ -50,7 +52,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 		MetricDataQueries: []*cloudwatch.MetricDataQuery{
 			&metricQuery,
 		},
-		StartTime:     t,
+		StartTime:     stime,
 		MaxDatapoints: &maxDataPoints,
 	}
 	return param
