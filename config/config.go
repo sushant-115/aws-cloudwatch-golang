@@ -4,7 +4,7 @@ package config
 const Namespace string = "AWS/Billing"
 
 //DimensionName for filter the data points
-const DimensionName string = "LoadBalancer"
+const DimensionName string = "Currency"
 
 //DimensionValue for filter the data points
 const DimensionValue string = ""
