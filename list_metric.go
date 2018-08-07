@@ -92,6 +92,14 @@ func main() {
 		if err != nil {
 			fmt.Println(i, err)
 		}
+		for res.NextToken != nil {
+			paramQuery.NextToken = res.NextToken
+			res, err = svc.GetMetricData(&paramQuery)
+			if err != nil {
+				fmt.Println(i, err)
+			}
+			fmt.Println(res)
+		}
 		fmt.Println(res)
 	}
 }
