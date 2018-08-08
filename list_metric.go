@@ -4,6 +4,7 @@ import (
 	"./config"
 	"./set"
 	"./structs"
+	"./sendmail"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
@@ -146,5 +147,12 @@ func main() {
 		}
 
 	}
-	fmt.Println(set.MakeSet(reports))
+	var sr []structs.Report=set.MakeSet(reports)
+	fmt.Printf("%T",sr)
+	data :=""
+	for k:=0;k<len(sr);k++{
+	data =data +"\n "+sr[k].ServiceName +" "+sr[k].ServiceID+" "+sr[k].Report+" "+sr[k].Timestamp
+//	fmt.Println(data)
+	}
+	sendmail.SendMail1(data)
 }
