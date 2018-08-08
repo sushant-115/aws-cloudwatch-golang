@@ -14,10 +14,19 @@ import (
 	"time"
 )
 
+//Report for unutilized services
+type Report struct {
+	serviceName string
+	serviceID   string
+	report      string
+	timestamp   time.Time
+}
+
 var endTimePointer *time.Time
 var pID *string
 var periodPointer *int64
 var stat *string
+var reports = []Report{}
 
 //var unit *string
 var av = config.Stat
@@ -77,11 +86,23 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	return param
 }
 
+func judge(result *cloudwatch.MetricDataResult, threshold float64) bool {
+	for i := 0; i < len(result.MetricDataResults); i++ {
+		metricValue := result.MetricDataResults[i].Values
+		for j := 0; j < len(metricValue); j++ {
+			if metricValue[j] < threshold {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func main() {
 	namespace := config.Namespace
 	dimensions := config.DimensionName
 	dimensionValue := config.DimensionValue
-
+	threshold := config.Threshold
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -93,7 +114,6 @@ func main() {
 			fmt.Println("Error", err)
 			return
 		}
-		fmt.Println(result)
 		for i := 0; i < len(result.Metrics); i++ {
 			paramQuery := getParam(i, result.Metrics[i])
 			res, err := svc.GetMetricData(&paramQuery)
@@ -107,13 +127,29 @@ func main() {
 						if err != nil {
 							fmt.Println(i, err)
 						} else {
-							fmt.Println(res)
+							if judge(res, threshold[i]) {
+								serviceName := result.Metrics[0].Namespace
+								serviceID := result.Metrics[0].Dimensions[0].Value
+								report := "Unutilized"
+								timestamp := res.MetricDataResults[0].Timestamps[0]
+								r := Report{serviceName, serviceId, report, timestamp}
+								reports = append(reports, r)
+							}
 						}
 					}
 				} else {
-					fmt.Println(res)
+					if judge(res, threshold[i]) {
+						serviceName := result.Metrics[0].Namespace
+						serviceID := result.Metrics[0].Dimensions[0].Value
+						report := "Unutilized"
+						timestamp := res.MetricDataResults[0].Timestamps[0]
+						r := Report{serviceName, serviceId, report, timestamp}
+						reports = append(reports, r)
+					}
 				}
 			}
 		}
+
 	}
+	fmt.Println(reports)
 }
