@@ -14,12 +14,6 @@ import (
 )
 
 //Report for unutilized services
-type Report struct {
-	serviceName string
-	serviceID   string
-	report      string
-	timestamp   string
-}
 
 var endTimePointer *time.Time
 var pID *string
