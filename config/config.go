@@ -4,7 +4,7 @@ package config
 var Namespace = []string{"AWS/ApplicationELB", "AWS/EC2", "AWS/EBS"}
 
 //DimensionName for filter the data points
-var DimensionName = []string{"Metric Name", "Metric Name", "Metric Name"}
+var DimensionName = []string{"MetricName", "MetricName", "MetricName"}
 
 //DimensionValue for filter the data points
 var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteBytes"}
