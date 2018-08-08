@@ -23,13 +23,13 @@ var stat *string
 var av = config.Stat
 
 //var st = config.Unit
-func getListParam(namespace /* , dimensionName */, dimensionValue string) *cloudwatch.ListMetricsInput {
+func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.ListMetricsInput {
 	param := &cloudwatch.ListMetricsInput{
 		//   MetricName: aws.String(metric),
 		Namespace: aws.String(namespace),
 		Dimensions: []*cloudwatch.DimensionFilter{
 			&cloudwatch.DimensionFilter{
-				//Name:  aws.String(dimensionName),
+				Name:  aws.String(dimensionName),
 				Value: aws.String(dimensionValue),
 			},
 		},
@@ -78,7 +78,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 
 func main() {
 	namespace := config.Namespace
-	//dimensions := config.DimensionName
+	dimensions := config.DimensionName
 	dimensionValue := config.DimensionValue
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -87,7 +87,7 @@ func main() {
 
 	svc := cloudwatch.New(sess)
 	for j := 0; j < len(namespace); j++ {
-		result, err := svc.ListMetrics(getListParam(namespace[j] /* , dimensions[j] */, dimensionValue[j]))
+		result, err := svc.ListMetrics(getListParam(namespace[j], dimensions[j], dimensionValue[j]))
 		if err != nil {
 			fmt.Println("Error", err)
 			return
