@@ -19,7 +19,7 @@ type Report struct {
 	serviceName string
 	serviceID   string
 	report      string
-	timestamp   time.Time
+	timestamp   string
 }
 
 var endTimePointer *time.Time
@@ -131,8 +131,8 @@ func main() {
 								serviceName := result.Metrics[0].Namespace
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
-								timestamp := res.MetricDataResults[0].Timestamps[0]
-								r := Report{*serviceName, *serviceID, report, *timestamp}
+								timestamp := *res.MetricDataResults[0].Timestamps[0]
+								r := Report{*serviceName, *serviceID, report, timestamp.String()}
 								reports = append(reports, r)
 							}
 						}
@@ -142,8 +142,8 @@ func main() {
 						serviceName := result.Metrics[0].Namespace
 						serviceID := result.Metrics[0].Dimensions[0].Value
 						report := "Unutilized"
-						timestamp := res.MetricDataResults[0].Timestamps[0]
-						r := Report{*serviceName, *serviceID, report, *timestamp}
+						timestamp := *res.MetricDataResults[0].Timestamps[0]
+						r := Report{*serviceName, *serviceID, report, timestamp.String()}
 						reports = append(reports, r)
 					}
 				}
