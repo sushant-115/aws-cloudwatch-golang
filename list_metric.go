@@ -24,6 +24,7 @@ var av = config.Stat
 
 //var st = config.Unit
 func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.ListMetricsInput {
+	fmt.Println(namespace, dimensionName, dimensionValue)
 	param := &cloudwatch.ListMetricsInput{
 		//   MetricName: aws.String(metric),
 		Namespace: aws.String(namespace),
