@@ -1,22 +1,21 @@
 package set
 
-//Report coming from results
-type Report interface{}
+import "../structs"
 
 //ReportSet a custom hashset
 type ReportSet struct {
-	set map[Report]bool
+	set map[structs.Report]bool
 }
 
 //Add method for adding elements in set if not present
-func (set *ReportSet) add(r Report) bool {
+func (set *ReportSet) add(r structs.Report) bool {
 	_, found := set.set[r]
 	set.set[r] = true
 	return !found //False if it existed already
 }
 
-func createArray(m map[Report]bool) []Report {
-	arr := []Report{}
+func createArray(m map[structs.Report]bool) []structs.Report {
+	arr := []structs.Report{}
 	for k := range m {
 		arr = append(arr, k)
 	}
@@ -24,9 +23,9 @@ func createArray(m map[Report]bool) []Report {
 }
 
 //MakeSet from reports array
-func MakeSet(reports []Report) []Report {
+func MakeSet(reports []structs.Report) []structs.Report {
 
-	set := make(map[Report]bool)
+	set := make(map[structs.Report]bool)
 	x := ReportSet{set}
 	for i := 0; i < len(reports); i++ {
 		x.add(reports[i])

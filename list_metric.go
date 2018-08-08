@@ -2,6 +2,8 @@ package main
 
 import (
 	"./config"
+	"./structs"
+	"./set"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
@@ -19,7 +21,7 @@ var endTimePointer *time.Time
 var pID *string
 var periodPointer *int64
 var stat *string
-var reports = []Report{}
+var reports = []structs.Report{}
 
 //var unit *string
 var av = config.Stat
@@ -125,7 +127,7 @@ func main() {
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
 								timestamp := *res.MetricDataResults[0].Timestamps[0]
-								r := Report{*serviceName, *serviceID, report, timestamp.String()}
+								r :=structs.Report{*serviceName, *serviceID, report, timestamp.String()}
 								reports = append(reports, r)
 							}
 						}
@@ -136,7 +138,7 @@ func main() {
 						serviceID := result.Metrics[0].Dimensions[0].Value
 						report := "Unutilized"
 						timestamp := *res.MetricDataResults[0].Timestamps[0]
-						r := Report{*serviceName, *serviceID, report, timestamp.String()}
+						r := structs.Report{*serviceName, *serviceID, report, timestamp.String()}
 						reports = append(reports, r)
 					}
 				}
@@ -144,5 +146,5 @@ func main() {
 		}
 
 	}
-	fmt.Println(reports)
+	fmt.Println(set.MakeSet(reports))
 }
