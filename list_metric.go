@@ -132,13 +132,13 @@ func main() {
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
 								timestamp := res.MetricDataResults[0].Timestamps[0]
-								r := Report{*serviceName,*serviceID,report, *timestamp}
+								r := Report{*serviceName, *serviceID, report, *timestamp}
 								reports = append(reports, r)
 							}
 						}
 					}
 				} else {
-					if judge(res, threshold[i]) {
+					if judge(res, threshold[j]) {
 						serviceName := result.Metrics[0].Namespace
 						serviceID := result.Metrics[0].Dimensions[0].Value
 						report := "Unutilized"
