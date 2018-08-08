@@ -1,12 +1,7 @@
 package set
 
 //Report coming from results
-type Report struct {
-	serviceName string
-	serviceID   string
-	report      string
-	timestamp   string
-}
+type Report interface{}
 
 //ReportSet a custom hashset
 type ReportSet struct {
