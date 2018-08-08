@@ -1,28 +1,28 @@
 package config
 
 //Namespace of the metric
-const Namespace string = "AWS/ApplicationELB"
+var Namespace = []string{"AWS/ApplicationELB", "AWS/EC2", "AWS/EBS"}
 
 //DimensionName for filter the data points
-const DimensionName string = "LoadBalancer"
+var DimensionName = []string{"LoadBalancer", "InstanceId", "VolumeId"}
 
 //DimensionValue for filter the data points
-const DimensionValue string = ""
+var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteBytes"}
 
 //Stat value
-const Stat string = "Average"
+var Stat = "Average"
 
 //Unit in which the output will come
-const Unit string = "Count"
+var Unit = []string{"Count", "Percent", "Bytes"}
 
 //StartTime number of days from today
-const StartTime int = 1
+var StartTime = 1
 
 //EndTime number of days from today (0 for today)
-const EndTime int = 0
+var EndTime = 0
 
 //Period in seconds
-const Period int = 300
+var Period = 300
 
 //MaxDataPoints in result
-const MaxDataPoints int = 1000
+var MaxDataPoints = 1000
