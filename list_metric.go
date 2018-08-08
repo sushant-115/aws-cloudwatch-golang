@@ -2,8 +2,8 @@ package main
 
 import (
 	"./config"
-	"./structs"
 	"./set"
+	"./structs"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
@@ -122,12 +122,12 @@ func main() {
 						if err != nil {
 							fmt.Println(i, err)
 						} else {
-							if judge(res, threshold[i]) {
+							if judge(res, threshold[j]) {
 								serviceName := result.Metrics[0].Namespace
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
 								timestamp := *res.MetricDataResults[0].Timestamps[0]
-								r :=structs.Report{*serviceName, *serviceID, report, timestamp.String()}
+								r := structs.Report{*serviceName, *serviceID, report, timestamp.String()}
 								reports = append(reports, r)
 							}
 						}
