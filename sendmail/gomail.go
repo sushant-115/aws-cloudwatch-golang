@@ -26,6 +26,10 @@ func (s *SmtpServer) ServerName() string {
 	return s.host + ":" + s.port
 }
 
+const (
+	MIME = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+)
+
 func (mail *Mail) BuildMessage() string {
 	message := ""
 	message += fmt.Sprintf("From: %s\r\n", mail.senderId)
@@ -34,6 +38,7 @@ func (mail *Mail) BuildMessage() string {
 	}
 
 	message += fmt.Sprintf("Subject: %s\r\n", mail.subject)
+	message += "\r\n" + MIME
 	message += "\r\n" + mail.body
 
 	return message
