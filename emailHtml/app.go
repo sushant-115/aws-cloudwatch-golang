@@ -11,5 +11,5 @@ func SendMail() {
 	subject := "Get latest Tech News directly to your inbox"
 	destination := "sushant@exotel.in"
 	r := NewRequest([]string{destination}, subject)
-	r.Send("templates/template.html", map[string]string{"username": "Sushant"})
+	r.Send("emailHtml/templates/template.html", map[string]string{"username": "Sushant"})
 }
