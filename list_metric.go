@@ -86,11 +86,11 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	return param
 }
 
-func judge(result *cloudwatch.MetricDataResult, threshold float64) bool {
+func judge(result *cloudwatch.GetMetricDataOutput, threshold float64) bool {
 	for i := 0; i < len(result.MetricDataResults); i++ {
 		metricValue := result.MetricDataResults[i].Values
 		for j := 0; j < len(metricValue); j++ {
-			if metricValue[j] < threshold {
+			if *metricValue[j] < threshold {
 				return true
 			}
 		}
@@ -132,7 +132,7 @@ func main() {
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
 								timestamp := res.MetricDataResults[0].Timestamps[0]
-								r := Report{serviceName, serviceId, report, timestamp}
+								r := Report{*serviceName,*serviceID,report, *timestamp}
 								reports = append(reports, r)
 							}
 						}
@@ -143,7 +143,7 @@ func main() {
 						serviceID := result.Metrics[0].Dimensions[0].Value
 						report := "Unutilized"
 						timestamp := res.MetricDataResults[0].Timestamps[0]
-						r := Report{serviceName, serviceId, report, timestamp}
+						r := Report{*serviceName, *serviceID, report, *timestamp}
 						reports = append(reports, r)
 					}
 				}
