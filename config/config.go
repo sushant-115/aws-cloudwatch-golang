@@ -9,6 +9,9 @@ var DimensionName = []string{"MetricName", "MetricName", "MetricName"}
 //DimensionValue for filter the data points
 var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteBytes"}
 
+//Threshold for each metric for notification
+var Threshold =[]float64{100 , 10, 50000}
+
 //Stat value
 var Stat = "Average"
 
@@ -22,7 +25,7 @@ var StartTime = 1
 var EndTime = 0
 
 //Period in seconds
-var Period = 300
+var Period = 3600*24
 
 //MaxDataPoints in result
 var MaxDataPoints = 1000

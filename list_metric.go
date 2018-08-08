@@ -93,7 +93,7 @@ func main() {
 			fmt.Println("Error", err)
 			return
 		}
-
+		fmt.Println(result)
 		for i := 0; i < len(result.Metrics); i++ {
 			paramQuery := getParam(i, result.Metrics[i])
 			res, err := svc.GetMetricData(&paramQuery)
