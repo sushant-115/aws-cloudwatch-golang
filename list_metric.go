@@ -14,25 +14,27 @@ import (
 	"time"
 )
 
-var t *time.Time
+var endTimePointer *time.Time
 var pID *string
-var period *int64
+var periodPointer *int64
 var stat *string
+
 //var unit *string
 var av = config.Stat
+
 //var st = config.Unit
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
-	tim := time.Now().AddDate(0, 0, -config.EndTime)
+	endTime := time.Now().AddDate(0, 0, -config.EndTime)
 	startTime := time.Now().AddDate(0, 0, -config.StartTime)
-	stime := &startTime
-	t = &tim
+	startTimePointer := &startTime
+	endTimePointer = &endTime
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
 	stat = &av
-//	unit = &st
-	prd := int64(config.Period)
-	period = &prd
+	//	unit = &st
+	period := int64(config.Period)
+	periodPointer = &period
 	returnData := true
 	maxDataPoints := int64(config.MaxDataPoints)
 	metricStat := cloudwatch.MetricStat{
@@ -41,9 +43,9 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 			MetricName: list.MetricName,
 			Namespace:  list.Namespace,
 		},
-		Period: period, /* required */
+		Period: periodPointer, /* required */
 		Stat:   stat,
-//		Unit:   unit,
+		//		Unit:   unit,
 	}
 	metricQuery := cloudwatch.MetricDataQuery{
 		Id:         pID, /* required */
@@ -51,11 +53,11 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 		ReturnData: &returnData,
 	}
 	param := cloudwatch.GetMetricDataInput{
-		EndTime: t, /* required */
+		EndTime: endTimePointer, /* required */
 		MetricDataQueries: []*cloudwatch.MetricDataQuery{
 			&metricQuery,
 		},
-		StartTime:     stime,
+		StartTime:     startTimePointer,
 		MaxDatapoints: &maxDataPoints,
 	}
 	return param
