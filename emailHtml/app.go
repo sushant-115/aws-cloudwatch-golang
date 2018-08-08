@@ -2,14 +2,14 @@ package emailHtml
 
 var config = Config{}
 
-func configuration() {
+func Configuration() {
 	config.Read()
 }
 
 func SendMail() {
-	configuration()
+	//configuration()
 	subject := "Get latest Tech News directly to your inbox"
-	destination := "mohamed.labouardy@gmail.com"
+	destination := "sushant@exotel.in"
 	r := NewRequest([]string{destination}, subject)
-	r.Send("templates/template.html", map[string]string{"username": "Conor"})
+	r.Send("templates/template.html", map[string]string{"username": "Sushant"})
 }
