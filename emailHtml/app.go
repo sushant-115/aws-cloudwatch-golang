@@ -7,7 +7,7 @@ func Configuration() {
 }
 
 func SendMail() {
-	//configuration()
+	Configuration()
 	subject := "Get latest Tech News directly to your inbox"
 	destination := "sushant@exotel.in"
 	r := NewRequest([]string{destination}, subject)

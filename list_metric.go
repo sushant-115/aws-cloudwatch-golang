@@ -148,7 +148,7 @@ func main() {
 		}
 
 	}
-	emailHtml.Configuration()
+	//emailHtml.Configuration()
 	var sr []structs.Report = set.MakeSet(reports)
 	fmt.Printf("%T", sr)
 	data := ""
