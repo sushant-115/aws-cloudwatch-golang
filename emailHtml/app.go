@@ -10,7 +10,7 @@ func Configuration() {
 
 func SendMail(report []structs.Report) {
 	Configuration()
-	subject := "Get latest Tech News directly to your inbox"
+	subject := "Daily AWS Service Report"
 	destination := "sushant@exotel.in"
 	r := NewRequest([]string{destination}, subject)
 	r.Send("emailHtml/templates/template.html", map[string][]structs.Report{"report": report})
