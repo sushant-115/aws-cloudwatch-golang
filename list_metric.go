@@ -45,6 +45,9 @@ func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.L
 }
 
 func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput {
+	if len(list.Dimensions) < 1 {
+		return cloudwatch.GetMetricDataInput{}
+	}
 	endTime := time.Now().AddDate(0, 0, -config.EndTime)
 	startTime := time.Now().AddDate(0, 0, -config.StartTime)
 	startTimePointer := &startTime
@@ -57,6 +60,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	periodPointer = &period
 	returnData := true
 	maxDataPoints := int64(config.MaxDataPoints)
+	//fmt.Println(list.Dimensions)
 	metricStat := cloudwatch.MetricStat{
 		Metric: &cloudwatch.Metric{ /* required */
 			Dimensions: []*cloudwatch.Dimension{list.Dimensions[0]},
@@ -84,6 +88,7 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 }
 
 func judge(result *cloudwatch.GetMetricDataOutput, threshold float64) bool {
+	//	fmt.Println(result)
 	for i := 0; i < len(result.MetricDataResults); i++ {
 		metricValue := result.MetricDataResults[i].Values
 		for j := 0; j < len(metricValue); j++ {
@@ -125,22 +130,26 @@ func main() {
 							fmt.Println(i, err)
 						} else {
 							if judge(res, threshold[j]) {
+//								fmt.Println(res)
 								serviceName := result.Metrics[0].Namespace
 								serviceID := result.Metrics[0].Dimensions[0].Value
 								report := "Unutilized"
+								utilization := *res.MetricDataResults[0].Values[0]
 								timestamp := *res.MetricDataResults[0].Timestamps[0]
-								r := structs.Report{*serviceName, *serviceID, report, timestamp.String()}
+								r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
 								reports = append(reports, r)
 							}
 						}
 					}
 				} else {
 					if judge(res, threshold[j]) {
+//						fmt.Println(res)
 						serviceName := result.Metrics[0].Namespace
 						serviceID := result.Metrics[0].Dimensions[0].Value
 						report := "Unutilized"
+						utilization := *res.MetricDataResults[0].Values[0]
 						timestamp := *res.MetricDataResults[0].Timestamps[0]
-						r := structs.Report{*serviceName, *serviceID, report, timestamp.String()}
+						r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
 						reports = append(reports, r)
 					}
 				}

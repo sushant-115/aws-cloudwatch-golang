@@ -10,13 +10,13 @@ var DimensionName = []string{"MetricName", "MetricName", "MetricName"}
 var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteBytes"}
 
 //Threshold for each metric for notification
-var Threshold =[]float64{100 , 10.00001, 500000}
+var Threshold = []float64{10000000, 1, 10000000}
 
 //Stat value
-var Stat = "Average"
+var Stat ="Maximum"// "Average"
 
 //Unit in which the output will come
-var Unit = []string{"Count", "Percent", "Bytes"}
+var Unit = []string{"Count", "Percent", "KiloBytes"}
 
 //StartTime number of days from today
 var StartTime = 1
@@ -25,7 +25,7 @@ var StartTime = 1
 var EndTime = 0
 
 //Period in seconds
-var Period = 3600*24
+var Period = 3600 * 24
 
 //MaxDataPoints in result
-var MaxDataPoints = 1000
+var MaxDataPoints = 100800
