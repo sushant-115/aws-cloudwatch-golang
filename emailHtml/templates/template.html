@@ -5,90 +5,262 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Subscribe To My Blog - M.Labouardy</title>
     <style type="text/css">
-      body{
-        margin: 0 auto;
-        padding: 0;
-        min-width: 100%;
-        font-family: sans-serif;
-      }
-      table{
-        margin: 50px 0 50px 0;
-      }
-      .header{
-        height: 40px;
-        text-align: center;
-        text-transform: uppercase;
-        font-size: 24px;
-        font-weight: bold;
-      }
-      .content{
-        height: 100px;
-        font-size: 18px;
-        line-height: 30px;
-      }
-      .subscribe{
-        height: 70px;
-        text-align: center;
-      }
-      .button{
-        text-align: center;
-        font-size: 18px;
-        font-family: sans-serif;
-        font-weight: bold;
-        padding: 0 30px 0 30px;
-      }
-      .button a{
-        color: #FFFFFF;
-        text-decoration: none;
-      }
-      .buttonwrapper{
-        margin: 0 auto;
-      }
-      .footer{
-        text-transform: uppercase;
-        text-align: center;
-        height: 40px;
-        font-size: 14px;
-        font-style: italic;
-      }
-      .footer a{
-        color: #000000;
-        text-decoration: none;
-        font-style: normal;
-      }
+     
+h1{
+  font-size: 30px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 15px;
+}
+table{
+  width:100%;
+  table-layout: fixed;
+}
+.tbl-header{
+  background-color: rgba(255,255,255,0.3);
+ }
+.tbl-content{
+  height:300px;
+  overflow-x:auto;
+  margin-top: 0px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+th{
+  padding: 20px 15px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  text-transform: uppercase;
+}
+td{
+  padding: 15px;
+  text-align: left;
+  vertical-align:middle;
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+  border-bottom: solid 1px rgba(255,255,255,0.1);
+}
+
+
+/* demo styles */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+body{
+  background: -webkit-linear-gradient(left, #25c481, #25b7c4);
+  background: linear-gradient(to right, #25c481, #25b7c4);
+  font-family: 'Roboto', sans-serif;
+}
+section{
+  margin: 50px;
+}
+
+
+/* follow me template */
+.made-with-love {
+  margin-top: 40px;
+  padding: 10px;
+  clear: left;
+  text-align: center;
+  font-size: 10px;
+  font-family: arial;
+  color: #fff;
+}
+.made-with-love i {
+  font-style: normal;
+  color: #F50057;
+  font-size: 14px;
+  position: relative;
+  top: 2px;
+}
+.made-with-love a {
+  color: #fff;
+  text-decoration: none;
+}
+.made-with-love a:hover {
+  text-decoration: underline;
+}
+
+
+/* for custom scrollbar for webkit browser*/
+
+::-webkit-scrollbar {
+    width: 6px;
+} 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+} 
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
     </style>
   </head>
-  <body bgcolor="#009587">
-    <table bgcolor="#FFFFFF" width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr class="header">
-        <td style="padding: 40px;">
-          It's worth it !
-        </td>
-      </tr>
-      <tr class="content">
-        <td style="padding:10px;">
-          <p>
-            Hi <b>{{ .username }}</b>, <br/>
-            I'm <b>Mohamed</b>. I write about <b>DevOps</b>, <b>ChatOps</b>, <b>Android</b> and much more. If you don't find me super annoying, subscribe to my mailing list in order to make sure you don't miss my newest blog posts.
-          </p>
-        </td>
-      </tr>
-      <tr class="subscribe">
-        <td style="padding: 20px 0 0 0;">
-          <table bgcolor="#009587" border="0" cellspacing="0" cellpadding="0" class="buttonwrapper">
-            <tr>
-              <td class="button" height="45">
-                <a href="http://labouardy.com" target="_blank">SUBSCRIBE NOW</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr class="footer">
-        <td style="padding: 40px;">
-          Designed by <a href="http://labouardy.com" target="_blank">Mohamed Labouardy</a>
-        </td>
-      </tr>
-    </table>
+  <body >
+      <section>
+          <h1>{{.username}}</h1>
+          <h1>Fixed Table header</h1>
+          <div class="tbl-header">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Service ID</th>
+                  <th>Report</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbl-content">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tbody>
+                <tr>
+                  <td>AAC</td>
+                  <td>AUSTRALIAN COMPANY </td>
+                  <td>$1.38</td>
+                  <td>+2.01</td>
+                  <td>-0.36%</td>
+                </tr>
+                <tr>
+                  <td>AAD</td>
+                  <td>AUSENCO</td>
+                  <td>$2.38</td>
+                  <td>-0.01</td>
+                  <td>-1.36%</td>
+                </tr>
+                <tr>
+                  <td>AAX</td>
+                  <td>ADELAIDE</td>
+                  <td>$3.22</td>
+                  <td>+0.01</td>
+                  <td>+1.36%</td>
+                </tr>
+                <tr>
+                  <td>XXD</td>
+                  <td>ADITYA BIRLA</td>
+                  <td>$1.02</td>
+                  <td>-1.01</td>
+                  <td>+2.36%</td>
+                </tr>
+                <tr>
+                  <td>AAC</td>
+                  <td>AUSTRALIAN COMPANY </td>
+                  <td>$1.38</td>
+                  <td>+2.01</td>
+                  <td>-0.36%</td>
+                </tr>
+                <tr>
+                  <td>AAD</td>
+                  <td>AUSENCO</td>
+                  <td>$2.38</td>
+                  <td>-0.01</td>
+                  <td>-1.36%</td>
+                </tr>
+                <tr>
+                  <td>AAX</td>
+                  <td>ADELAIDE</td>
+                  <td>$3.22</td>
+                  <td>+0.01</td>
+                  <td>+1.36%</td>
+                </tr>
+                <tr>
+                  <td>XXD</td>
+                  <td>ADITYA BIRLA</td>
+                  <td>$1.02</td>
+                  <td>-1.01</td>
+                  <td>+2.36%</td>
+                </tr>
+                <tr>
+                  <td>AAC</td>
+                  <td>AUSTRALIAN COMPANY </td>
+                  <td>$1.38</td>
+                  <td>+2.01</td>
+                  <td>-0.36%</td>
+                </tr>
+                <tr>
+                  <td>AAD</td>
+                  <td>AUSENCO</td>
+                  <td>$2.38</td>
+                  <td>-0.01</td>
+                  <td>-1.36%</td>
+                </tr>
+                
+                <tr>
+                  <td>AAX</td>
+                  <td>ADELAIDE</td>
+                  <td>$3.22</td>
+                  <td>+0.01</td>
+                  <td>+1.36%</td>
+                </tr>
+                <tr>
+                  <td>XXD</td>
+                  <td>ADITYA BIRLA</td>
+                  <td>$1.02</td>
+                  <td>-1.01</td>
+                  <td>+2.36%</td>
+                </tr>
+                <tr>
+                  <td>AAC</td>
+                  <td>AUSTRALIAN COMPANY </td>
+                  <td>$1.38</td>
+                  <td>+2.01</td>
+                  <td>-0.36%</td>
+                </tr>
+                <tr>
+                  <td>AAD</td>
+                  <td>AUSENCO</td>
+                  <td>$2.38</td>
+                  <td>-0.01</td>
+                  <td>-1.36%</td>
+                </tr>
+                <tr>
+                  <td>AAX</td>
+                  <td>ADELAIDE</td>
+                  <td>$3.22</td>
+                  <td>+0.01</td>
+                  <td>+1.36%</td>
+                </tr>
+                <tr>
+                  <td>XXD</td>
+                  <td>ADITYA BIRLA</td>
+                  <td>$1.02</td>
+                  <td>-1.01</td>
+                  <td>+2.36%</td>
+                </tr>
+                <tr>
+                  <td>AAC</td>
+                  <td>AUSTRALIAN COMPANY </td>
+                  <td>$1.38</td>
+                  <td>+2.01</td>
+                  <td>-0.36%</td>
+                </tr>
+                <tr>
+                  <td>AAD</td>
+                  <td>AUSENCO</td>
+                  <td>$2.38</td>
+                  <td>-0.01</td>
+                  <td>-1.36%</td>
+                </tr>
+                <tr>
+                  <td>AAX</td>
+                  <td>ADELAIDE</td>
+                  <td>$3.22</td>
+                  <td>+0.01</td>
+                  <td>+1.36%</td>
+                </tr>
+                <tr>
+                  <td>XXD</td>
+                  <td>ADITYA BIRLA</td>
+                  <td>$1.02</td>
+                  <td>-1.01</td>
+                  <td>+2.36%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
   </body>
 </html>
