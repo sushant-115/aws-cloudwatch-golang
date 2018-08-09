@@ -10,6 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 
+	"github.com/aws/aws-sdk-go/service/costexplorer"
+
 	"fmt"
 	// "os"
 
@@ -87,17 +89,46 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	return param
 }
 
-func judge(result *cloudwatch.GetMetricDataOutput, threshold float64) bool {
-	//	fmt.Println(result)
-	for i := 0; i < len(result.MetricDataResults); i++ {
-		metricValue := result.MetricDataResults[i].Values
+func getCostParam() *costexplorer.GetCostAndUsageInput {
+	granualarity := "MONTHLY"
+	metric1 := "BlendedCost"
+	metric2 := "UnblendedCost"
+	metric3 := "UsageQuantity"
+	metric4 := "NormalizedUsageAmount"
+	metric5 := "AmortizedCost"
+	metric6 := "NetUnblendedCost"
+	metrics := []*string{&metric1, &metric2, &metric3, &metric4, &metric5, &metric6}
+	endDate := "2018-08-08"
+	startDate := "2018-07-07"
+	dateInterval := costexplorer.DateInterval{}
+	dateInt := &dateInterval
+	dateInt = dateInterval.SetEnd(endDate)
+	dateInt = dateInterval.SetStart(startDate)
+	param := costexplorer.GetCostAndUsageInput{
+		Granularity: &granualarity,
+		Metrics:     metrics,
+		TimePeriod:  dateInt,
+	}
+	return &param
+}
+
+func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.ListMetricsOutput) {
+	//	fmt.Println(res)
+	for i := 0; i < len(res.MetricDataResults); i++ {
+		metricValue := res.MetricDataResults[i].Values
 		for j := 0; j < len(metricValue); j++ {
 			if *metricValue[j] < threshold {
-				return true
+				serviceName := result.Metrics[0].Namespace
+				serviceID := result.Metrics[0].Dimensions[0].Value
+				report := "Unutilized"
+				utilization := *res.MetricDataResults[0].Values[0]
+				timestamp := *res.MetricDataResults[0].Timestamps[0]
+				r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
+				reports = append(reports, r)
 			}
 		}
 	}
-	return false
+
 }
 
 func main() {
@@ -110,6 +141,12 @@ func main() {
 	}))
 
 	svc := cloudwatch.New(sess)
+	sve := costexplorer.New(sess)
+	costRes, err := sve.GetCostAndUsage(getCostParam())
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(costRes)
 	for j := 0; j < len(namespace); j++ {
 		result, err := svc.ListMetrics(getListParam(namespace[j], dimensions[j], dimensionValue[j]))
 		if err != nil {
@@ -129,29 +166,22 @@ func main() {
 						if err != nil {
 							fmt.Println(i, err)
 						} else {
-							if judge(res, threshold[j]) {
-//								fmt.Println(res)
-								serviceName := result.Metrics[0].Namespace
-								serviceID := result.Metrics[0].Dimensions[0].Value
-								report := "Unutilized"
-								utilization := *res.MetricDataResults[0].Values[0]
-								timestamp := *res.MetricDataResults[0].Timestamps[0]
-								r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
-								reports = append(reports, r)
-							}
+							judge(res, threshold[j], result)
+							//								fmt.Println(res)
+							// serviceName := result.Metrics[0].Namespace
+							// serviceID := result.Metrics[0].Dimensions[0].Value
+							// report := "Unutilized"
+							// utilization := *res.MetricDataResults[0].Values[0]
+							// timestamp := *res.MetricDataResults[0].Timestamps[0]
+							// r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
+							// reports = append(reports, r)
+
 						}
 					}
 				} else {
-					if judge(res, threshold[j]) {
-//						fmt.Println(res)
-						serviceName := result.Metrics[0].Namespace
-						serviceID := result.Metrics[0].Dimensions[0].Value
-						report := "Unutilized"
-						utilization := *res.MetricDataResults[0].Values[0]
-						timestamp := *res.MetricDataResults[0].Timestamps[0]
-						r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
-						reports = append(reports, r)
-					}
+					judge(res, threshold[j], result)
+					//						fmt.Println(res)
+
 				}
 			}
 		}
