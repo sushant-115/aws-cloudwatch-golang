@@ -150,12 +150,12 @@ func main() {
 	}
 	//emailHtml.Configuration()
 	var sr []structs.Report = set.MakeSet(reports)
-	fmt.Printf("%T", sr)
-	data := ""
-	for k := 0; k < len(sr); k++ {
+	//fmt.Printf("%T", sr)
+	/* 	data := "" */
+	/* for k := 0; k < len(sr); k++ {
 		data = data + "\n " + sr[k].ServiceName + " " + sr[k].ServiceID + " " + sr[k].Report + " " + sr[k].Timestamp
 		//	fmt.Println(data)
-	}
+	} */
 	//sendmail.SendMail1(data)
-	emailHtml.SendMail()
+	emailHtml.SendMail(sr)
 }
