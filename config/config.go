@@ -10,7 +10,7 @@ var DimensionName = []string{"MetricName", "MetricName", "MetricName"}
 var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteBytes"}
 
 //Threshold for each metric for notification
-var Threshold = []float64{10000000, 1, 10000000}
+var Threshold = []float64{10, 10, 10}
 
 //Stat value
 var Stat ="Maximum"// "Average"

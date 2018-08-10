@@ -32,7 +32,7 @@ var av = config.Stat
 
 //var st = config.Unit
 func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.ListMetricsInput {
-	fmt.Println(namespace, dimensionName, dimensionValue)
+	//fmt.Println(namespace, dimensionName, dimensionValue)
 	param := &cloudwatch.ListMetricsInput{
 		//   MetricName: aws.String(metric),
 		Namespace: aws.String(namespace),
@@ -112,19 +112,21 @@ func getCostParam() *costexplorer.GetCostAndUsageInput {
 	return &param
 }
 
-func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.ListMetricsOutput) {
+func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.Metric) {
 	//	fmt.Println(res)
 	for i := 0; i < len(res.MetricDataResults); i++ {
 		metricValue := res.MetricDataResults[i].Values
 		for j := 0; j < len(metricValue); j++ {
+			//fmt.Println(*metricValue[j], threshold)
 			if *metricValue[j] < threshold {
-				serviceName := result.Metrics[0].Namespace
-				serviceID := result.Metrics[0].Dimensions[0].Value
+				serviceName := result.Namespace
+				serviceID := result.Dimensions[0].Value
 				report := "Unutilized"
 				utilization := *res.MetricDataResults[0].Values[0]
 				timestamp := *res.MetricDataResults[0].Timestamps[0]
 				r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
 				reports = append(reports, r)
+				//fmt.Println(reports)
 			}
 		}
 	}
@@ -166,7 +168,7 @@ func main() {
 						if err != nil {
 							fmt.Println(i, err)
 						} else {
-							judge(res, threshold[j], result)
+							judge(res, threshold[j], result.Metrics[i])
 							//								fmt.Println(res)
 							// serviceName := result.Metrics[0].Namespace
 							// serviceID := result.Metrics[0].Dimensions[0].Value
@@ -179,7 +181,7 @@ func main() {
 						}
 					}
 				} else {
-					judge(res, threshold[j], result)
+					judge(res, threshold[j], result.Metrics[i])
 					//						fmt.Println(res)
 
 				}
