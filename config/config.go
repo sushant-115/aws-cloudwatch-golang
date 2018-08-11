@@ -13,13 +13,13 @@ var DimensionValue = []string{"RequestCount", "CPUUtilization", "VolumeWriteByte
 var Threshold = []float64{10, 10, 10}
 
 //Stat value
-var Stat ="Maximum"// "Average"
+var Stat = "Maximum" // "Average"
 
 //Unit in which the output will come
 var Unit = []string{"Count", "Percent", "KiloBytes"}
 
 //StartTime number of days from today
-var StartTime = 1
+var StartTime =2 
 
 //EndTime number of days from today (0 for today)
 var EndTime = 0
@@ -29,3 +29,6 @@ var Period = 3600 * 24
 
 //MaxDataPoints in result
 var MaxDataPoints = 100800
+
+//Granularity is for the cost report options are : MONTHLY or DAILY
+var Granularity = "MONTHLY"

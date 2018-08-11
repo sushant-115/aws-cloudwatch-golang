@@ -90,23 +90,34 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 }
 
 func getCostParam() *costexplorer.GetCostAndUsageInput {
-	granualarity := "MONTHLY"
+	granularity := config.Granularity
 	metric1 := "BlendedCost"
 	metric2 := "UnblendedCost"
-	metric3 := "UsageQuantity"
-	metric4 := "NormalizedUsageAmount"
-	metric5 := "AmortizedCost"
-	metric6 := "NetUnblendedCost"
-	metrics := []*string{&metric1, &metric2, &metric3, &metric4, &metric5, &metric6}
-	endDate := "2018-08-08"
-	startDate := "2018-07-07"
+	metrics := []*string{&metric1, &metric2}
+	endDate := time.Now().AddDate(0, 0, config.EndTime).Format("2006-01-02")
+	startDate := time.Now().AddDate(0, 0, -config.StartTime).Format("2006-01-02")
 	dateInterval := costexplorer.DateInterval{}
 	dateInt := &dateInterval
 	dateInt = dateInterval.SetEnd(endDate)
 	dateInt = dateInterval.SetStart(startDate)
 	param := costexplorer.GetCostAndUsageInput{
-		Granularity: &granualarity,
+		Granularity: &granularity,
 		Metrics:     metrics,
+		TimePeriod:  dateInt,
+	}
+	return &param
+}
+
+func getReservationParam() *costexplorer.GetReservationUtilizationInput {
+	granularity := config.Granularity
+	endDate := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
+	startDate := time.Now().AddDate(0, 0, -4).Format("2006-01-02")
+	dateInterval := costexplorer.DateInterval{}
+	dateInt := &dateInterval
+	dateInt = dateInterval.SetEnd(endDate)
+	dateInt = dateInterval.SetStart(startDate)
+	param := costexplorer.GetReservationUtilizationInput{
+		Granularity: &granularity,
 		TimePeriod:  dateInt,
 	}
 	return &param
@@ -148,13 +159,19 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(costRes)
+	// reservationReport, err := sve.GetReservationUtilization(getReservationParam())
+	// fmt.Println(reservationReport, err)
+	// reservationreccomendation, err := sve.GetReservationPurchaseRecommendation(&costexplorer.GetReservationPurchaseRecommendationInput{Service: &serv})
+	// fmt.Println(reservationreccomendation, err)
+	//fmt.Println(costRes.ResultsByTime[0].Total["UnblendedCost"])
+	costReport := costRes.ResultsByTime[0].Total["UnblendedCost"].Amount
 	for j := 0; j < len(namespace); j++ {
 		result, err := svc.ListMetrics(getListParam(namespace[j], dimensions[j], dimensionValue[j]))
 		if err != nil {
 			fmt.Println("Error", err)
 			return
 		}
+		//fmt.Println(result)
 		for i := 0; i < len(result.Metrics); i++ {
 			paramQuery := getParam(i, result.Metrics[i])
 			res, err := svc.GetMetricData(&paramQuery)
@@ -198,5 +215,5 @@ func main() {
 		//	fmt.Println(data)
 	} */
 	//sendmail.SendMail1(data)
-	emailHtml.SendMail(sr)
+	emailHtml.SendMail(sr, *costReport)
 }
