@@ -12,8 +12,8 @@
         "CPUUtilization"
     ],
     "Threshold": [
-        10.01,
-        10.01
+        1.01,
+        1.01
     ],
     "Stat": "Maximum",
     "Unit": [

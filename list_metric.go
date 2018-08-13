@@ -142,6 +142,7 @@ func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloud
 		for j := 0; j < len(metricValue); j++ {
 			//fmt.Println(*metricValue[j], threshold)
 			if *metricValue[j] < threshold {
+				// fmt.Println(*metricValue[j], threshold)
 				serviceName := result.Namespace
 				serviceID := result.Dimensions[0].Value
 				report := "Unutilized"
