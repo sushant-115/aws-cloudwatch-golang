@@ -1,10 +1,6 @@
 package main
 
 import (
-
-	//"./config"
-	//"./sendmail"
-
 	"./emailHtml"
 	"./set"
 	"./structs"
