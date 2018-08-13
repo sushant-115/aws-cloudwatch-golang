@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/smtp"
+	"os"
 )
 
 type Request struct {
@@ -40,6 +41,10 @@ func (r *Request) parseTemplate(fileName string, data interface{}) error {
 }
 
 func (r *Request) sendMail() bool {
+	if len(r.to) == 0 {
+		fmt.Println("Minimum one recipient is neccesary")
+		os.Exit(1)
+	}
 	var recipients string
 	for i := 0; i < len(r.to); i++ {
 		recipients = recipients + r.to[i]

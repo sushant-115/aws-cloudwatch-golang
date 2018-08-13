@@ -12,7 +12,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/costexplorer"
 
-	"fmt"
+	"log"
+
 	// "os"
 	"encoding/json"
 	"io/ioutil"
@@ -149,11 +150,11 @@ func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloud
 func main() {
 	bytesJson, er := ioutil.ReadFile("configuration.json")
 	if er != nil {
-		fmt.Println(er)
+		log.Fatal(er)
 	}
 	er = json.Unmarshal(bytesJson, &config)
 	if er != nil {
-		fmt.Println(er)
+		log.Fatal(er)
 	}
 	// fmt.Println(config)
 	namespace := config["Namespace"].([]interface{})
@@ -169,7 +170,7 @@ func main() {
 	sve := costexplorer.New(sess)
 	costRes, err := sve.GetCostAndUsage(getCostParam())
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	// reservationReport, err := sve.GetReservationUtilization(getReservationParam())
 	// fmt.Println(reservationReport, err)
@@ -180,21 +181,21 @@ func main() {
 	for j := 0; j < len(namespace); j++ {
 		result, err := svc.ListMetrics(getListParam(namespace[j].(string), dimensions[j].(string), dimensionValue[j].(string)))
 		if err != nil {
-			fmt.Println("Error", err)
+			log.Fatal(err)
 			return
 		}
 		for i := 0; i < len(result.Metrics); i++ {
 			paramQuery := getParam(i, result.Metrics[i])
 			res, err := svc.GetMetricData(&paramQuery)
 			if err != nil {
-				fmt.Println(i, err)
+				log.Fatal(err)
 			} else {
 				if res.NextToken != nil {
 					for res.NextToken != nil {
 						paramQuery.NextToken = res.NextToken
 						res, err = svc.GetMetricData(&paramQuery)
 						if err != nil {
-							fmt.Println(i, err)
+							log.Fatal(err)
 						} else {
 							judge(res, threshold[j].(float64), result.Metrics[i])
 
