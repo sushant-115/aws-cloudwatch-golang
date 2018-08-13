@@ -155,7 +155,7 @@ func main() {
 	if er != nil {
 		fmt.Println(er)
 	}
-	fmt.Println(config)
+	// fmt.Println(config)
 	namespace := config["Namespace"].([]interface{})
 	dimensions := config["DimensionName"].([]interface{})
 	dimensionValue := config["DimensionValue"].([]interface{})

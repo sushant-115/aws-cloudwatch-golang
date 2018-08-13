@@ -1,31 +1,26 @@
 {
     "Namespace": [
         "AWS/ApplicationELB",
-        "AWS/EC2",
-        "AWS/EBS"
+        "AWS/EC2"
     ],
     "DimensionName": [
-        "MetricName",
         "MetricName",
         "MetricName"
     ],
     "DimensionValue": [
         "RequestCount",
-        "CPUUtilization",
-        "VolumeWriteBytes"
+        "CPUUtilization"
     ],
     "Threshold": [
-        10.01,
         10.01,
         10.01
     ],
     "Stat": "Maximum",
     "Unit": [
         "Count",
-        "Percent",
-        "KiloBytes"
+        "Percent"
     ],
-    "StartTime": 2,
+    "StartTime": 1,
     "EndTime": 0,
     "Period": 3600,
     "MaxDataPoints": 100800,
