@@ -1,0 +1,33 @@
+{
+    "Namespace": [
+        "AWS/ApplicationELB",
+        "AWS/EC2",
+        "AWS/EBS"
+    ],
+    "DimensionName": [
+        "MetricName",
+        "MetricName",
+        "MetricName"
+    ],
+    "DimensionValue": [
+        "RequestCount",
+        "CPUUtilization",
+        "VolumeWriteBytes"
+    ],
+    "Threshold": [
+        10.01,
+        10.01,
+        10.01
+    ],
+    "Stat": "Maximum",
+    "Unit": [
+        "Count",
+        "Percent",
+        "KiloBytes"
+    ],
+    "StartTime": 2,
+    "EndTime": 0,
+    "Period": 3600,
+    "MaxDataPoints": 100800,
+    "Granularity": "MONTHLY"
+}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./config"
+	//"./config"
 	//"./sendmail"
 	"./emailHtml"
 	"./set"
@@ -14,7 +14,8 @@ import (
 
 	"fmt"
 	// "os"
-
+	"encoding/json"
+	"io/ioutil"
 	"strconv"
 	"time"
 )
@@ -26,9 +27,10 @@ var pID *string
 var periodPointer *int64
 var stat *string
 var reports = []structs.Report{}
+var config map[string]interface{}
 
 //var unit *string
-var av = config.Stat
+var av string
 
 //var st = config.Unit
 func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.ListMetricsInput {
@@ -50,18 +52,18 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	if len(list.Dimensions) < 1 {
 		return cloudwatch.GetMetricDataInput{}
 	}
-	endTime := time.Now().AddDate(0, 0, -config.EndTime)
-	startTime := time.Now().AddDate(0, 0, -config.StartTime)
+	endTime := time.Now().AddDate(0, 0, -int(config["EndTime"].(float64)))
+	startTime := time.Now().AddDate(0, 0, -int(config["StartTime"].(float64)))
 	startTimePointer := &startTime
 	endTimePointer = &endTime
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
 	stat = &av
 	//	unit = &st
-	period := int64(config.Period)
+	period := int64(config["Period"].(float64))
 	periodPointer = &period
 	returnData := true
-	maxDataPoints := int64(config.MaxDataPoints)
+	maxDataPoints := int64(config["MaxDataPoints"].(float64))
 	//fmt.Println(list.Dimensions)
 	metricStat := cloudwatch.MetricStat{
 		Metric: &cloudwatch.Metric{ /* required */
@@ -90,12 +92,12 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 }
 
 func getCostParam() *costexplorer.GetCostAndUsageInput {
-	granularity := config.Granularity
+	granularity := config["Granularity"].(string)
 	metric1 := "BlendedCost"
 	metric2 := "UnblendedCost"
 	metrics := []*string{&metric1, &metric2}
-	endDate := time.Now().AddDate(0, 0, config.EndTime).Format("2006-01-02")
-	startDate := time.Now().AddDate(0, 0, -config.StartTime).Format("2006-01-02")
+	endDate := time.Now().AddDate(0, 0, -int(config["EndTime"].(float64))).Format("2006-01-02")
+	startDate := time.Now().AddDate(0, 0, -int(config["StartTime"].(float64))).Format("2006-01-02")
 	dateInterval := costexplorer.DateInterval{}
 	dateInt := &dateInterval
 	dateInt = dateInterval.SetEnd(endDate)
@@ -109,7 +111,7 @@ func getCostParam() *costexplorer.GetCostAndUsageInput {
 }
 
 func getReservationParam() *costexplorer.GetReservationUtilizationInput {
-	granularity := config.Granularity
+	granularity := config["Granularity"].(string)
 	endDate := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
 	startDate := time.Now().AddDate(0, 0, -4).Format("2006-01-02")
 	dateInterval := costexplorer.DateInterval{}
@@ -145,10 +147,20 @@ func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloud
 }
 
 func main() {
-	namespace := config.Namespace
-	dimensions := config.DimensionName
-	dimensionValue := config.DimensionValue
-	threshold := config.Threshold
+	bytesJson, er := ioutil.ReadFile("configuration.json")
+	if er != nil {
+		fmt.Println(er)
+	}
+	er = json.Unmarshal(bytesJson, &config)
+	if er != nil {
+		fmt.Println(er)
+	}
+	fmt.Println(config)
+	namespace := config["Namespace"].([]interface{})
+	dimensions := config["DimensionName"].([]interface{})
+	dimensionValue := config["DimensionValue"].([]interface{})
+	threshold := config["Threshold"].([]interface{})
+	av = config["Stat"].(string)
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -166,12 +178,11 @@ func main() {
 	//fmt.Println(costRes.ResultsByTime[0].Total["UnblendedCost"])
 	costReport := costRes.ResultsByTime[0].Total["UnblendedCost"].Amount
 	for j := 0; j < len(namespace); j++ {
-		result, err := svc.ListMetrics(getListParam(namespace[j], dimensions[j], dimensionValue[j]))
+		result, err := svc.ListMetrics(getListParam(namespace[j].(string), dimensions[j].(string), dimensionValue[j].(string)))
 		if err != nil {
 			fmt.Println("Error", err)
 			return
 		}
-		//fmt.Println(result)
 		for i := 0; i < len(result.Metrics); i++ {
 			paramQuery := getParam(i, result.Metrics[i])
 			res, err := svc.GetMetricData(&paramQuery)
@@ -185,35 +196,18 @@ func main() {
 						if err != nil {
 							fmt.Println(i, err)
 						} else {
-							judge(res, threshold[j], result.Metrics[i])
-							//								fmt.Println(res)
-							// serviceName := result.Metrics[0].Namespace
-							// serviceID := result.Metrics[0].Dimensions[0].Value
-							// report := "Unutilized"
-							// utilization := *res.MetricDataResults[0].Values[0]
-							// timestamp := *res.MetricDataResults[0].Timestamps[0]
-							// r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
-							// reports = append(reports, r)
+							judge(res, threshold[j].(float64), result.Metrics[i])
 
 						}
 					}
 				} else {
-					judge(res, threshold[j], result.Metrics[i])
-					//						fmt.Println(res)
+					judge(res, threshold[j].(float64), result.Metrics[i])
 
 				}
 			}
 		}
 
 	}
-	//emailHtml.Configuration()
 	var sr []structs.Report = set.MakeSet(reports)
-	//fmt.Printf("%T", sr)
-	/* 	data := "" */
-	/* for k := 0; k < len(sr); k++ {
-		data = data + "\n " + sr[k].ServiceName + " " + sr[k].ServiceID + " " + sr[k].Report + " " + sr[k].Timestamp
-		//	fmt.Println(data)
-	} */
-	//sendmail.SendMail1(data)
 	emailHtml.SendMail(sr, *costReport)
 }
