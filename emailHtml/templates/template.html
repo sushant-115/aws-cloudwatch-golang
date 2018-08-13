@@ -1,145 +1,192 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta name="viewport" content="width=device-width"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>AWS Service Report</title>
-    <style type="text/css">
-     
-h1{
-  font-size: 100%;
-  color: #000;
-  text-transform: uppercase;
-  font-weight: 300;
-  text-align: center;
-}
-table{
-  width:100%;
-  table-layout: fixed;
-}
-.tbl-header{
-  background-color: rgba(0,0,0,0.3);
- }
-.tbl-content{
-  height:300px;
-  overflow-x:auto;
-   margin-top: 0px; 
-  border: 1px solid rgba(0,0,0,0.3);
-}
-th{
-  padding: 1.5% 2%;
-  text-align: left;
-  font-weight: 500;
-  font-size: 100%;
-  color: #000;
-  text-transform: uppercase;
-}
-td{
-  padding: 2%;
-  text-align: left;
-  vertical-align:middle;
-  font-weight: 300;
-  font-size: 12px;
-  color: #000;
-  border-bottom: solid 1px rgba(0,0,0,0.1);
-}
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>AWS Service Report</title>
+  <style type="text/css">
+    h1 {
+      font-size: 100%;
+      color: #000;
+      text-transform: uppercase;
+      font-weight: 300;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .tbl-header {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .tbl-content {
+      height: 300px;
+      overflow-x: auto;
+      margin-top: 0px;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+    }
+
+    th {
+      padding: 1.5% 2%;
+      text-align: left;
+      font-weight: 500;
+      font-size: 100%;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 2%;
+      text-align: left;
+      vertical-align: middle;
+      font-weight: 300;
+      font-size: 12px;
+      color: #000;
+      border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .cost-report {
+      display: grid;
+      grid-template-areas: "a b";
+      text-align: center;
+      justify-content: space-evenly
+    }
+
+    .cost {
+      height: 100px;
+      width: 200px;
+      
+    }
 
 
-/* demo styles */
+    /* demo styles */
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
-body{
-  background: -webkit-linear-gradient(left, #25c481, #25b7c4);
-  background: linear-gradient(to right, #25c481, #25b7c4);
-  font-family: 'Roboto', sans-serif;
-}
-section{
-  display: grid;
-  width:100%;
-  margin: 0
-}
-@media (min-width: 1281px) {
-  .tbl-content{
-  height:600px;
-  }
-}
+    @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+    body {
+      background: -webkit-linear-gradient(left, #25c481, #25b7c4);
+      background: linear-gradient(to right, #25c481, #25b7c4);
+      font-family: 'Roboto', sans-serif;
+    }
 
+    section {
+      display: grid;
+      width: 100%;
+      margin: 0
+    }
 
-@media (min-width: 1025px) and (max-width: 1280px) {  
-  
-}
+    
+    .minified-service-report {
+      text-align: center;
+    }
 
-@media (min-width: 768px) and (max-width: 1024px) {  
-  td {
-    font-size: 12px
-  }
-}
+    button {
+      width: 20%;
+      text-decoration: none;
+      background-color: rosybrown;
+      height: 40px;
+    }
 
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-  td {
-    font-size: 10px
-  }
-}
-  
-@media (min-width: 481px) and (max-width: 767px) {
-  td {
-    font-size: 8px;
-    padding: 2%;
-  }
-  th{
-    font-size:10px
-  }
-}
-
-@media (min-width: 200px) and (max-width: 480px) {
-  td {
-    font-size: 7px;
-    padding: 1%;
-
-  }
-  th{
-    font-size:8px
-  }
-}
+    @media (min-width: 1281px) {
+      .tbl-content {
+        height: 600px;
+      }
+    }
 
 
-    </style>
-  </head>
-  <body >
-      <section style="background:linear-gradient(to right, #25c481, #25b7c4)">
-          <h1>Daily AWS Service Report</h1>
-          <div class="cost">
-           <h2>Your daily expense is:	&#x24; {{.cost}}</h2>
-          </div>
-          <div class="tbl-header">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <thead>
-                <tr>
-                  <th>Service Name</th>
-                  <th>Service ID</th>
-                  <th>Report</th>
-                  <th>Utilization</th>
-                  <th>Timestamp</th>
-                </tr>
-              </thead>
-            </table>
-          </div>
-          <div class="tbl-content">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tbody>
-                {{range .report}}
-                <tr>
-                  <td>{{.ServiceName}}</td>
-                  <td>{{.ServiceID}} </td>
-                  <td>{{.Report}}</td>
-                  <td>{{.Utiliization}}</td>
-                  <td>{{.Timestamp}}</td>
-                </tr>
-                {{end}}
+    @media (min-width: 1025px) and (max-width: 1280px) {}
 
-              </tbody>
-            </table>
-          </div>
-        </section>
-  </body>
+    @media (min-width: 768px) and (max-width: 1024px) {
+      td {
+        font-size: 12px
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+      td {
+        font-size: 10px
+      }
+      
+    }
+
+    @media (min-width: 481px) and (max-width: 767px) {
+      td {
+        font-size: 8px;
+        padding: 2%;
+      }
+      th {
+        font-size: 10px
+      }
+      .cost{
+        width:60%
+      }
+    }
+
+    @media (min-width: 200px) and (max-width: 480px) {
+      td {
+        font-size: 7px;
+        padding: 1%;
+
+      }
+      th {
+        font-size: 8px
+      }
+      .cost{
+        width:50%
+      }
+    }
+  </style>
+</head>
+
+<body>
+    <h1 style="text-align: center">Daily AWS Service Report</h1>
+  <section class="cost-report">
+    
+    <div class="cost today">Average daily spend
+      <br>&#x24; {{.cost}}</div>
+    <div class="cost month">Month to date spend
+      <br>&#x24; 12121</div>
+  </section>
+  <section class="minified-service-report">
+    {{range .reportCount}}
+    <p>{{.Count}} unutilized {{.Name}} detected</p>
+    {{end}}
+  </section>
+  <section id="tableReport" style="background:linear-gradient(to right, #25c481, #25b7c4)">
+
+    <div class="tbl-header">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <thead>
+          <tr>
+            <th>Service Name</th>
+            <th>Service ID</th>
+            <th>Report</th>
+            <th>Utilization</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="tbl-content">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tbody>
+          {{range .report}}
+          <tr>
+            <td>{{.ServiceName}}</td>
+            <td>{{.ServiceID}} </td>
+            <td>{{.Report}}</td>
+            <td>{{.Utiliization}}</td>
+            <td>{{.Timestamp}}</td>
+          </tr>
+          {{end}}
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+</body>
+
 </html>
