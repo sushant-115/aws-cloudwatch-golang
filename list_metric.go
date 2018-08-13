@@ -171,6 +171,11 @@ func main() {
 	dimensions := config["DimensionName"].([]interface{})
 	dimensionValue := config["DimensionValue"].([]interface{})
 	threshold := config["Threshold"].([]interface{})
+	mailRecipients := config["MailRecipients"].([]interface{})
+	var mailRecipientsStr []string
+	for i := 0; i < len(mailRecipients); i++ {
+		mailRecipientsStr = append(mailRecipientsStr, mailRecipients[i].(string))
+	}
 	av = config["Stat"].(string)
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -224,5 +229,5 @@ func main() {
 
 	}
 	var sr []structs.Report = set.MakeSet(reports)
-	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth)
+	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth, mailRecipientsStr)
 }

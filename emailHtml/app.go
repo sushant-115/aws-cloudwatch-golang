@@ -13,11 +13,11 @@ func Configuration() {
 	config.Read()
 }
 
-func SendMail(report []structs.Report, costReport string, unusedHours *string, utilization *string, monthlyCost *string) {
+func SendMail(report []structs.Report, costReport string, unusedHours *string, utilization *string, monthlyCost *string, mailRecipients []string) {
 	Configuration()
 	subject := "Daily AWS Service Report"
-	destination := "sushant@exotel.in"
-	r := NewRequest([]string{destination, "sushant.gupta@mountblue.io"}, subject)
+	//destination := "sushant@exotel.in"
+	r := NewRequest(mailRecipients, subject)
 	temp := make(map[string]interface{})
 	var reportCountArr []ReportCount
 	rc := make(map[string]int)
