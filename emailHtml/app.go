@@ -13,7 +13,7 @@ func Configuration() {
 	config.Read()
 }
 
-func SendMail(report []structs.Report, costReport string) {
+func SendMail(report []structs.Report, costReport string, unusedHours *string, utilization *string, monthlyCost *string) {
 	Configuration()
 	subject := "Daily AWS Service Report"
 	destination := "sushant@exotel.in"
@@ -31,5 +31,8 @@ func SendMail(report []structs.Report, costReport string) {
 	temp["report"] = report
 	temp["cost"] = costReport
 	temp["reportCount"] = reportCountArr
+	temp["unusedHour"] = unusedHours
+	temp["utilization"] = utilization
+	temp["monthlyCost"] = monthlyCost
 	r.Send("emailHtml/templates/template.html", temp)
 }

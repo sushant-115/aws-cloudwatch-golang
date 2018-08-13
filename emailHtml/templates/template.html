@@ -50,15 +50,14 @@
     }
 
     .cost-report {
-      display: grid;
+      display: block;
       grid-template-areas: "a b";
       text-align: center;
       justify-content: space-evenly
     }
 
     .cost {
-      height: 100px;
-      width: 200px;
+      font-size: 18px;
       
     }
 
@@ -145,15 +144,15 @@
     <h1 style="text-align: center">Daily AWS Service Report</h1>
   <section class="cost-report">
     
-    <div class="cost today">Average daily spend
-      <br>&#x24; {{.cost}}</div>
-    <div class="cost month">Month to date spend
-      <br>&#x24; 12121</div>
+    <div class="cost today">Daily spend : &#x24; {{.cost}}</div>
+    <div class="cost month">Month to date spend : &#x24; {{.monthlyCost}}</div>
   </section>
   <section class="minified-service-report">
     {{range .reportCount}}
     <p>{{.Count}} unutilized {{.Name}} detected</p>
     {{end}}
+    <p>{{.unusedHour}} unused hours of Reserved Instances</p>
+    <p>{{.utilization}}% total utilization of Reserved Instances</p>
   </section>
   <section id="tableReport" style="background:linear-gradient(to right, #25c481, #25b7c4)">
 

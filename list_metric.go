@@ -1,8 +1,10 @@
 package main
 
 import (
+
 	//"./config"
 	//"./sendmail"
+
 	"./emailHtml"
 	"./set"
 	"./structs"
@@ -92,13 +94,14 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	return param
 }
 
-func getCostParam() *costexplorer.GetCostAndUsageInput {
+func getCostParam() (*costexplorer.GetCostAndUsageInput, *costexplorer.GetCostAndUsageInput) {
 	granularity := config["Granularity"].(string)
 	metric1 := "BlendedCost"
 	metric2 := "UnblendedCost"
+	t := time.Now()
 	metrics := []*string{&metric1, &metric2}
-	endDate := time.Now().AddDate(0, 0, -int(config["EndTime"].(float64))).Format("2006-01-02")
-	startDate := time.Now().AddDate(0, 0, -int(config["StartTime"].(float64))).Format("2006-01-02")
+	endDate := t.AddDate(0, 0, -int(config["EndTime"].(float64))).Format("2006-01-02")
+	startDate := t.AddDate(0, 0, -int(config["StartTime"].(float64))).Format("2006-01-02")
 	dateInterval := costexplorer.DateInterval{}
 	dateInt := &dateInterval
 	dateInt = dateInterval.SetEnd(endDate)
@@ -108,7 +111,17 @@ func getCostParam() *costexplorer.GetCostAndUsageInput {
 		Metrics:     metrics,
 		TimePeriod:  dateInt,
 	}
-	return &param
+	dateIntervalMonth := costexplorer.DateInterval{}
+	dateIntMonth := &dateIntervalMonth
+	dateIntMonth = dateIntervalMonth.SetEnd(endDate)
+	monthFirstDay := t.AddDate(0, 0, -t.Day()+1).Format("2006-01-02")
+	dateIntMonth = dateIntervalMonth.SetStart(monthFirstDay)
+	param2 := costexplorer.GetCostAndUsageInput{
+		Granularity: &granularity,
+		Metrics:     metrics,
+		TimePeriod:  dateIntMonth,
+	}
+	return &param, &param2
 }
 
 func getReservationParam() *costexplorer.GetReservationUtilizationInput {
@@ -168,16 +181,20 @@ func main() {
 
 	svc := cloudwatch.New(sess)
 	sve := costexplorer.New(sess)
-	costRes, err := sve.GetCostAndUsage(getCostParam())
+	dailyParam, monthlyParam := getCostParam()
+	costRes, err := sve.GetCostAndUsage(dailyParam)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// reservationReport, err := sve.GetReservationUtilization(getReservationParam())
-	// fmt.Println(reservationReport, err)
+	monthlyCost, err := sve.GetCostAndUsage(monthlyParam)
+	//fmt.Println(monthlyCost)
+	reservationReport, err := sve.GetReservationUtilization(getReservationParam())
+	//fmt.Printf("%T%T", reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage)
 	// reservationreccomendation, err := sve.GetReservationPurchaseRecommendation(&costexplorer.GetReservationPurchaseRecommendationInput{Service: &serv})
 	// fmt.Println(reservationreccomendation, err)
 	//fmt.Println(costRes.ResultsByTime[0].Total["UnblendedCost"])
 	costReport := costRes.ResultsByTime[0].Total["UnblendedCost"].Amount
+	costReportMonth := monthlyCost.ResultsByTime[0].Total["UnblendedCost"].Amount
 	for j := 0; j < len(namespace); j++ {
 		result, err := svc.ListMetrics(getListParam(namespace[j].(string), dimensions[j].(string), dimensionValue[j].(string)))
 		if err != nil {
@@ -210,5 +227,5 @@ func main() {
 
 	}
 	var sr []structs.Report = set.MakeSet(reports)
-	emailHtml.SendMail(sr, *costReport)
+	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth)
 }
