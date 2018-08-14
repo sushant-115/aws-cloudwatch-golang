@@ -5,6 +5,6 @@ type Report struct {
 	ServiceName  string
 	ServiceID    string
 	Report       string
-	Utiliization float64
+	Utiliization string
 	Timestamp    string
 }

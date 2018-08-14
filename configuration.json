@@ -11,6 +11,10 @@
         "RequestCount",
         "CPUUtilization"
     ],
+    "Suffix" :[
+        "request(s)",
+        "%"
+    ],
     "Threshold": [
         1.01,
         1.01
@@ -25,5 +29,6 @@
     "Period": 3600,
     "MaxDataPoints": 100800,
     "Granularity": "MONTHLY",
-    "MailRecipients" :["raushan@exotel.in","arumugam@exotel.in","vishnu.gajendran@exotel.in","sushant@exotel.in"]
+    "MailRecipients" :["sushant@exotel.in"]
 }
+

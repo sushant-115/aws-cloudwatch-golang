@@ -122,8 +122,8 @@ func getCostParam() (*costexplorer.GetCostAndUsageInput, *costexplorer.GetCostAn
 
 func getReservationParam() *costexplorer.GetReservationUtilizationInput {
 	granularity := config["Granularity"].(string)
-	endDate := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
-	startDate := time.Now().AddDate(0, 0, -4).Format("2006-01-02")
+	endDate := time.Now().AddDate(0, 0, -3-(int(config["EndTime"].(float64)))).Format("2006-01-02")
+	startDate := time.Now().AddDate(0, 0, -3-(int(config["StartTime"].(float64)))).Format("2006-01-02")
 	dateInterval := costexplorer.DateInterval{}
 	dateInt := &dateInterval
 	dateInt = dateInterval.SetEnd(endDate)
@@ -135,7 +135,7 @@ func getReservationParam() *costexplorer.GetReservationUtilizationInput {
 	return &param
 }
 
-func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.Metric) {
+func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.Metric, utilSuffix string) {
 	//	fmt.Println(res)
 	for i := 0; i < len(res.MetricDataResults); i++ {
 		metricValue := res.MetricDataResults[i].Values
@@ -146,7 +146,7 @@ func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloud
 				serviceName := result.Namespace
 				serviceID := result.Dimensions[0].Value
 				report := "Unutilized"
-				utilization := *res.MetricDataResults[0].Values[0]
+				utilization := strconv.FormatFloat(*res.MetricDataResults[0].Values[0], 'g', -1, 32) + " " + utilSuffix
 				timestamp := *res.MetricDataResults[0].Timestamps[0]
 				r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
 				reports = append(reports, r)
@@ -172,6 +172,9 @@ func main() {
 	dimensionValue := config["DimensionValue"].([]interface{})
 	threshold := config["Threshold"].([]interface{})
 	mailRecipients := config["MailRecipients"].([]interface{})
+	suffixs := config["Suffix"].([]interface{})
+	startDate := time.Now().AddDate(0, 0, -int(config["StartTime"].(float64))).Format("2006-01-02")
+	endDate := time.Now().AddDate(0, 0, -int(config["EndTime"].(float64))).Format("2006-01-02")
 	var mailRecipientsStr []string
 	for i := 0; i < len(mailRecipients); i++ {
 		mailRecipientsStr = append(mailRecipientsStr, mailRecipients[i].(string))
@@ -216,12 +219,12 @@ func main() {
 						if err != nil {
 							log.Fatal(err)
 						} else {
-							judge(res, threshold[j].(float64), result.Metrics[i])
+							judge(res, threshold[j].(float64), result.Metrics[i], suffixs[j].(string))
 
 						}
 					}
 				} else {
-					judge(res, threshold[j].(float64), result.Metrics[i])
+					judge(res, threshold[j].(float64), result.Metrics[i], suffixs[j].(string))
 
 				}
 			}
@@ -229,5 +232,5 @@ func main() {
 
 	}
 	var sr []structs.Report = set.MakeSet(reports)
-	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth, mailRecipientsStr)
+	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth, mailRecipientsStr, startDate, endDate)
 }
