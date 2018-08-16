@@ -26,9 +26,9 @@
     ],
     "StartTime": 1,
     "EndTime": 0,
-    "Period": 3600,
+    "Period": 300,
     "MaxDataPoints": 100800,
     "Granularity": "MONTHLY",
-    "MailRecipients" :["sushant@exotel.in"]
+    "MailRecipients" :["arumugam@exotel.in","vishnu.gajendran@exotel.in","raushan@exotel.in"]
 }
 
