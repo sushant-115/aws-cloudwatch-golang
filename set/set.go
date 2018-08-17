@@ -1,6 +1,6 @@
 package set
 
-import "../structs"
+import "aws-cloudwatch-golang/structs"
 
 //ReportSet a custom hashset
 type ReportSet struct {

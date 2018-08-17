@@ -6,15 +6,18 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type Config struct {
+type config struct {
 	Server   string
 	Port     int
 	Email    string
 	Password string
 }
 
-func (c *Config) Read() {
-	if _, err := toml.DecodeFile("emailHtml/config.toml", &c); err != nil {
+//Configuration file containing email server, port ,id and password from config.toml
+var Configuration = config{}
+
+func init() {
+	if _, err := toml.DecodeFile("emailHtml/config.toml", &Configuration); err != nil {
 		log.Fatal(err)
 	}
 }

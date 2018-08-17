@@ -29,6 +29,7 @@
     "Period": 300,
     "MaxDataPoints": 100800,
     "Granularity": "MONTHLY",
-    "MailRecipients" :["arumugam@exotel.in","vishnu.gajendran@exotel.in","raushan@exotel.in"]
+    "Subject" :"Daily AWS Service Report",
+    "MailRecipients" :["sushant78080@gmail.com"]
 }
 

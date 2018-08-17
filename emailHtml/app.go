@@ -1,40 +1,33 @@
 package emailHtml
 
-import "../structs"
+import "aws-cloudwatch-golang/structs"
 
-var config = Config{}
-
+//ReportCount contains all counts of all unutilized service and their name
 type ReportCount struct {
 	Name  string
 	Count int
 }
 
-func Configuration() {
-	config.Read()
-}
-
-func SendMail(report []structs.Report, costReport string, unusedHours *string, utilization *string, monthlyCost *string, mailRecipients []string, startDate, endDate string) {
-	Configuration()
-	subject := "Daily AWS Service Report"
-	//destination := "sushant@exotel.in"
-	r := NewRequest(mailRecipients, subject)
-	temp := make(map[string]interface{})
+//SendMail will send the mail to recipients mentioned in configuration.json
+func SendMail(report []structs.Report, additionalReport *structs.AdditionalReport) {
+	request := NewRequest(additionalReport.MailRecipients, additionalReport.MailSubject)
+	mapToSendToHTMLMail := make(map[string]interface{})
 	var reportCountArr []ReportCount
-	rc := make(map[string]int)
+	reportCount := make(map[string]int)
 	for i := 0; i < len(report); i++ {
-		rc[report[i].ServiceName]++
+		reportCount[report[i].ServiceName]++
 	}
-	for k := range rc {
-		r := ReportCount{k, rc[k]}
-		reportCountArr = append(reportCountArr, r)
+	for k := range reportCount {
+		rept := ReportCount{k, reportCount[k]}
+		reportCountArr = append(reportCountArr, rept)
 	}
-	temp["report"] = report
-	temp["cost"] = costReport
-	temp["reportCount"] = reportCountArr
-	temp["unusedHour"] = unusedHours
-	temp["utilization"] = utilization
-	temp["monthlyCost"] = monthlyCost
-	temp["startDate"] = startDate
-	temp["endDate"] = endDate
-	r.Send("emailHtml/templates/template.html", temp)
+	mapToSendToHTMLMail["report"] = report
+	mapToSendToHTMLMail["cost"] = additionalReport.DailyCostReport
+	mapToSendToHTMLMail["reportCount"] = reportCountArr
+	mapToSendToHTMLMail["unusedHour"] = additionalReport.RIUnusedHours
+	mapToSendToHTMLMail["utilization"] = additionalReport.RIUtilizationPercentage
+	mapToSendToHTMLMail["monthlyCost"] = additionalReport.MonthlyCostReport
+	mapToSendToHTMLMail["startDate"] = additionalReport.StartDate
+	mapToSendToHTMLMail["endDate"] = additionalReport.EndDate
+	request.Send("emailHtml/templates/template.html", mapToSendToHTMLMail)
 }

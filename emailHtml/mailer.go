@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+//Request contain all the mail details
 type Request struct {
 	from    string
 	to      []string
@@ -20,6 +21,7 @@ const (
 	MIME = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 )
 
+//NewRequest is to create new Request struct
 func NewRequest(to []string, subject string) *Request {
 	return &Request{
 		to:      to,
@@ -53,13 +55,14 @@ func (r *Request) sendMail() bool {
 		}
 	}
 	body := "To: " + recipients + "\r\nSubject: " + r.subject + "\r\n" + MIME + "\r\n" + r.body
-	SMTP := fmt.Sprintf("%s:%d", config.Server, config.Port)
-	if err := smtp.SendMail(SMTP, smtp.PlainAuth("", config.Email, config.Password, config.Server), config.Email, r.to, []byte(body)); err != nil {
+	SMTP := fmt.Sprintf("%s:%d", Configuration.Server, Configuration.Port)
+	if err := smtp.SendMail(SMTP, smtp.PlainAuth("", Configuration.Email, Configuration.Password, Configuration.Server), Configuration.Email, r.to, []byte(body)); err != nil {
 		return false
 	}
 	return true
 }
 
+//Send will parse the html template and send to the recipients
 func (r *Request) Send(templateName string, items interface{}) {
 	err := r.parseTemplate(templateName, items)
 	if err != nil {

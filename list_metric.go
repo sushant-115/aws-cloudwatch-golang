@@ -1,25 +1,21 @@
 package main
 
 import (
-	"./emailHtml"
-	"./set"
-	"./structs"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"strconv"
+	"time"
+
+	"aws-cloudwatch-golang/emailHtml"
+	"aws-cloudwatch-golang/set"
+	"aws-cloudwatch-golang/structs"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
-
 	"github.com/aws/aws-sdk-go/service/costexplorer"
-
-	"log"
-
-	// "os"
-	"encoding/json"
-	"io/ioutil"
-	"strconv"
-	"time"
 )
-
-//Report for unutilized services
 
 var endTimePointer *time.Time
 var pID *string
@@ -28,14 +24,11 @@ var stat *string
 var reports = []structs.Report{}
 var config map[string]interface{}
 
-//var unit *string
 var av string
 
-//var st = config.Unit
 func getListParam(namespace, dimensionName, dimensionValue string) *cloudwatch.ListMetricsInput {
-	//fmt.Println(namespace, dimensionName, dimensionValue)
 	param := &cloudwatch.ListMetricsInput{
-		//   MetricName: aws.String(metric),
+
 		Namespace: aws.String(namespace),
 		Dimensions: []*cloudwatch.DimensionFilter{
 			&cloudwatch.DimensionFilter{
@@ -58,12 +51,12 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 	id := "m" + strconv.Itoa(index+1)
 	pID = &id
 	stat = &av
-	//	unit = &st
+
 	period := int64(config["Period"].(float64))
 	periodPointer = &period
 	returnData := true
 	maxDataPoints := int64(config["MaxDataPoints"].(float64))
-	//fmt.Println(list.Dimensions)
+
 	metricStat := cloudwatch.MetricStat{
 		Metric: &cloudwatch.Metric{ /* required */
 			Dimensions: []*cloudwatch.Dimension{list.Dimensions[0]},
@@ -72,7 +65,6 @@ func getParam(index int, list *cloudwatch.Metric) cloudwatch.GetMetricDataInput 
 		},
 		Period: periodPointer, /* required */
 		Stat:   stat,
-		//		Unit:   unit,
 	}
 	metricQuery := cloudwatch.MetricDataQuery{
 		Id:         pID, /* required */
@@ -136,13 +128,13 @@ func getReservationParam() *costexplorer.GetReservationUtilizationInput {
 }
 
 func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloudwatch.Metric, utilSuffix string) {
-	//	fmt.Println(res)
+
 	for i := 0; i < len(res.MetricDataResults); i++ {
 		metricValue := res.MetricDataResults[i].Values
 		for j := 0; j < len(metricValue); j++ {
-			//fmt.Println(*metricValue[j], threshold)
+
 			if *metricValue[j] < threshold {
-				// fmt.Println(*metricValue[j], threshold)
+
 				serviceName := result.Namespace
 				serviceID := result.Dimensions[0].Value
 				report := "Unutilized"
@@ -150,7 +142,7 @@ func judge(res *cloudwatch.GetMetricDataOutput, threshold float64, result *cloud
 				timestamp := *res.MetricDataResults[0].Timestamps[0]
 				r := structs.Report{*serviceName, *serviceID, report, utilization, timestamp.String()}
 				reports = append(reports, r)
-				//fmt.Println(reports)
+
 			}
 		}
 	}
@@ -166,12 +158,13 @@ func main() {
 	if er != nil {
 		log.Fatal(er)
 	}
-	// fmt.Println(config)
+
 	namespace := config["Namespace"].([]interface{})
 	dimensions := config["DimensionName"].([]interface{})
 	dimensionValue := config["DimensionValue"].([]interface{})
 	threshold := config["Threshold"].([]interface{})
 	mailRecipients := config["MailRecipients"].([]interface{})
+	subject := config["Subject"].(string)
 	suffixs := config["Suffix"].([]interface{})
 	startDate := time.Now().AddDate(0, 0, -int(config["StartTime"].(float64))).Format("2006-01-02")
 	endDate := time.Now().AddDate(0, 0, -int(config["EndTime"].(float64))).Format("2006-01-02")
@@ -192,12 +185,9 @@ func main() {
 		log.Fatal(err)
 	}
 	monthlyCost, err := sve.GetCostAndUsage(monthlyParam)
-	//fmt.Println(monthlyCost)
+
 	reservationReport, err := sve.GetReservationUtilization(getReservationParam())
-	//fmt.Printf("%T%T", reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage)
-	// reservationreccomendation, err := sve.GetReservationPurchaseRecommendation(&costexplorer.GetReservationPurchaseRecommendationInput{Service: &serv})
-	// fmt.Println(reservationreccomendation, err)
-	//fmt.Println(costRes.ResultsByTime[0].Total["UnblendedCost"])
+
 	costReport := costRes.ResultsByTime[0].Total["UnblendedCost"].Amount
 	costReportMonth := monthlyCost.ResultsByTime[0].Total["UnblendedCost"].Amount
 	for j := 0; j < len(namespace); j++ {
@@ -231,6 +221,7 @@ func main() {
 		}
 
 	}
-	var sr []structs.Report = set.MakeSet(reports)
-	emailHtml.SendMail(sr, *costReport, reservationReport.Total.UnusedHours, reservationReport.Total.UtilizationPercentage, costReportMonth, mailRecipientsStr, startDate, endDate)
+	var tableReport []structs.Report = set.MakeSet(reports)
+	additionalReport := structs.AdditionalReport{*costReport, *costReportMonth, *reservationReport.Total.UnusedHours, *reservationReport.Total.UtilizationPercentage, mailRecipientsStr, subject, startDate, endDate}
+	emailHtml.SendMail(tableReport, &additionalReport)
 }
